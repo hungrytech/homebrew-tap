@@ -3,16 +3,9 @@ class Wikibrain < Formula
 
   desc "Local-first personal memory bridge for Claude Code and Codex"
   homepage "https://github.com/hungrytech/wikibrain"
-  url "https://github.com/hungrytech/wikibrain/archive/refs/tags/v0.1.2.tar.gz"
-  sha256 "30490226e09d7757bfdde9bd9197e9f75d420c8d0192a558b0fef6547c3297e0"
+  url "https://github.com/hungrytech/wikibrain/archive/refs/tags/v0.1.3.tar.gz"
+  sha256 "cba9f5c63047712a0ae1e7bb63d01c6ce1353fb08d9ae041eadf1c879ecaab1b"
   license "MIT"
-
-  bottle do
-    root_url "https://ghcr.io/v2/hungrytech/tap"
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:  "acc14dcacbc31152db082abecfa032f2570a688e21e71007ed409d97e79c9265"
-    sha256 cellar: :any_skip_relocation, sequoia:      "ff3fa051fef75ba923801216f19f503d52b80dfc17b1055cfca2716197431672"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "295a355ea4796f1e1b5479b2f97fa242d30e3e7ab3536dbc03d8dc0c4bdd77c4"
-  end
 
   depends_on "python@3.13"
 
@@ -46,8 +39,9 @@ class Wikibrain < Formula
       The default workspace root is your home directory. Use one or more
       --workspace PATH options when you want a narrower capture allowlist.
 
-      Codex users must start a new session, open /hooks, and trust the
-      reviewed WikiBrain definitions.
+      Codex manual recall and remember commands work immediately. Automatic
+      Codex capture and recall require a new session plus /hooks review of the
+      current definition hash. brainctl does not inspect or bypass that trust.
 
       After a future brew upgrade, refresh the managed shim and skills with:
 
@@ -68,7 +62,7 @@ class Wikibrain < Formula
     ENV.prepend_path "PATH", bin
     (testpath/"user-home").mkpath
 
-    assert_match "brainctl 0.1.2", shell_output("#{bin}/brainctl --version")
+    assert_match "brainctl 0.1.3", shell_output("#{bin}/brainctl --version")
     assert_match "wikimap 1.1.0", shell_output("#{bin}/wikimap --version")
 
     system bin/"brainctl", "init", "--no-hooks", "--no-skills"
