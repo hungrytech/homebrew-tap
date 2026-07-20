@@ -3,16 +3,9 @@ class Wikibrain < Formula
 
   desc "Local-first personal memory bridge for Claude Code and Codex"
   homepage "https://github.com/hungrytech/wikibrain"
-  url "https://github.com/hungrytech/wikibrain/archive/refs/tags/v0.1.1.tar.gz"
-  sha256 "66f96788b6f1c55623350e2bef2ea693487e79888bd044d780d6d87937c26278"
+  url "https://github.com/hungrytech/wikibrain/archive/refs/tags/v0.1.2.tar.gz"
+  sha256 "30490226e09d7757bfdde9bd9197e9f75d420c8d0192a558b0fef6547c3297e0"
   license "MIT"
-
-  bottle do
-    root_url "https://ghcr.io/v2/hungrytech/tap"
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:  "19589873b9903d26fdb8330dae3584e2c157d5785d4665bd1503c9ffb6e354cd"
-    sha256 cellar: :any_skip_relocation, sequoia:      "2b065a4d561f2cf46152efe59f463de2dc6eea055fec37461c2ce5c1741ded8f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "6deee6455af2fd24456d20974e74db0d42a905d035707efd5e670bdb6e992e04"
-  end
 
   depends_on "python@3.13"
 
@@ -68,7 +61,7 @@ class Wikibrain < Formula
     ENV.prepend_path "PATH", bin
     (testpath/"user-home").mkpath
 
-    assert_match "brainctl 0.1.1", shell_output("#{bin}/brainctl --version")
+    assert_match "brainctl 0.1.2", shell_output("#{bin}/brainctl --version")
     assert_match "wikimap 1.1.0", shell_output("#{bin}/wikimap --version")
 
     system bin/"brainctl", "init", "--no-hooks", "--no-skills"
