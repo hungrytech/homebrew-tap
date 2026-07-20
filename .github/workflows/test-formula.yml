@@ -1,16 +1,7 @@
-name: Test Formula
+name: Manual source-install smoke test
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "Formula/**"
-      - ".github/workflows/test-formula.yml"
-  pull_request:
-    paths:
-      - "Formula/**"
-      - ".github/workflows/test-formula.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -22,7 +13,7 @@ jobs:
       - name: Tap repository
         run: brew tap hungrytech/tap
 
-      - name: Install WikiBrain
+      - name: Install WikiBrain from source
         run: brew install --build-from-source hungrytech/tap/wikibrain
 
       - name: Test WikiBrain
