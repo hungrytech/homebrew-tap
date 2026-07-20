@@ -6,6 +6,7 @@ class Wikibrain < Formula
   url "https://github.com/hungrytech/wikibrain/archive/refs/tags/v0.1.0.tar.gz"
   sha256 "b201b374b3914373cc3e24a8750337b7990ca80f4c78384389bebccba8fa3ad5"
   license "MIT"
+  revision 1
 
   depends_on "python@3.13"
 
