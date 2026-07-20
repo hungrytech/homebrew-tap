@@ -1,0 +1,29 @@
+name: Test Formula
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "Formula/**"
+      - ".github/workflows/test-formula.yml"
+  pull_request:
+    paths:
+      - "Formula/**"
+      - ".github/workflows/test-formula.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    runs-on: macos-15
+    steps:
+      - name: Tap repository
+        run: brew tap hungrytech/tap
+
+      - name: Install WikiBrain
+        run: brew install --build-from-source hungrytech/tap/wikibrain
+
+      - name: Test WikiBrain
+        run: brew test hungrytech/tap/wikibrain
