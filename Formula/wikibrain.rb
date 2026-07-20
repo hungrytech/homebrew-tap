@@ -7,6 +7,13 @@ class Wikibrain < Formula
   sha256 "66f96788b6f1c55623350e2bef2ea693487e79888bd044d780d6d87937c26278"
   license "MIT"
 
+  bottle do
+    root_url "https://ghcr.io/v2/hungrytech/tap"
+    sha256 cellar: :any_skip_relocation, arm64_tahoe:  "19589873b9903d26fdb8330dae3584e2c157d5785d4665bd1503c9ffb6e354cd"
+    sha256 cellar: :any_skip_relocation, sequoia:      "2b065a4d561f2cf46152efe59f463de2dc6eea055fec37461c2ce5c1741ded8f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "6deee6455af2fd24456d20974e74db0d42a905d035707efd5e670bdb6e992e04"
+  end
+
   depends_on "python@3.13"
 
   resource "setuptools" do
