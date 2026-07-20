@@ -3,17 +3,9 @@ class Wikibrain < Formula
 
   desc "Local-first personal memory bridge for Claude Code and Codex"
   homepage "https://github.com/hungrytech/wikibrain"
-  url "https://github.com/hungrytech/wikibrain/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "b201b374b3914373cc3e24a8750337b7990ca80f4c78384389bebccba8fa3ad5"
+  url "https://github.com/hungrytech/wikibrain/archive/refs/tags/v0.1.1.tar.gz"
+  sha256 "66f96788b6f1c55623350e2bef2ea693487e79888bd044d780d6d87937c26278"
   license "MIT"
-  revision 1
-
-  bottle do
-    root_url "https://ghcr.io/v2/hungrytech/tap"
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:  "2f7971d86524caf80546fb930e1154896317cd53f14bac70a3f87f0b6069f54b"
-    sha256 cellar: :any_skip_relocation, sequoia:      "6cdd74aa02b568aa7cc3cf56d5944a39081a676deec3e4d4eeacc4fab4a7b1f6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "87fea6e1a40b272be8e7e828377963bba9ec4fc0e24ae2131e3c4a6218aa3b79"
-  end
 
   depends_on "python@3.13"
 
@@ -41,8 +33,11 @@ class Wikibrain < Formula
       WikiBrain does not edit agent settings during brew install.
       Initialize the private vault and install reviewed hooks explicitly:
 
-        brainctl init --workspace /path/to/project
+        brainctl init
         brainctl doctor
+
+      The default workspace root is your home directory. Use one or more
+      --workspace PATH options when you want a narrower capture allowlist.
 
       Codex users must start a new session, open /hooks, and trust the
       reviewed WikiBrain definitions.
@@ -62,14 +57,17 @@ class Wikibrain < Formula
 
   test do
     ENV["WIKIBRAIN_HOME"] = testpath/"brain"
+    ENV["HOME"] = testpath/"user-home"
     ENV.prepend_path "PATH", bin
+    (testpath/"user-home").mkpath
 
-    assert_match "brainctl 0.1.0", shell_output("#{bin}/brainctl --version")
+    assert_match "brainctl 0.1.1", shell_output("#{bin}/brainctl --version")
     assert_match "wikimap 1.1.0", shell_output("#{bin}/wikimap --version")
 
-    system bin/"brainctl", "init",
-           "--no-hooks", "--no-skills", "--workspace", testpath.to_s
+    system bin/"brainctl", "init", "--no-hooks", "--no-skills"
     assert_path_exists testpath/"brain/config.json"
+    assert_match (testpath/"user-home").to_s,
+                 (testpath/"brain/config.json").read
 
     doctor = shell_output("#{bin}/brainctl doctor --skip-hooks --json")
     assert_match '"initialized": true', doctor
