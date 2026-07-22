@@ -35,6 +35,16 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Detect WikiBrain formula changes
+        id: wikibrain-changes
+        shell: bash
+        run: |
+          if git diff --quiet origin/main...HEAD -- Formula/wikibrain.rb; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Cache Homebrew Bundler RubyGems
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -64,13 +74,19 @@ jobs:
           HOMEBREW_DOCKER_REGISTRY_TOKEN: ${{ steps.base64-encode.outputs.token }}
 
       - name: Test source install where dependency bottles are unavailable
-        if: github.event_name == 'pull_request' && !matrix.bottle
+        if: >-
+          github.event_name == 'pull_request' &&
+          steps.wikibrain-changes.outputs.changed == 'true' &&
+          !matrix.bottle
         run: |
           brew install --build-from-source hungrytech/tap/wikibrain
           brew test hungrytech/tap/wikibrain
 
       - name: Stage bottles in the GitHub workspace
-        if: always() && github.event_name == 'pull_request' && matrix.bottle
+        if: >-
+          always() && github.event_name == 'pull_request' &&
+          steps.wikibrain-changes.outputs.changed == 'true' &&
+          matrix.bottle
         shell: bash
         run: |
           search_roots=("$GITHUB_WORKSPACE" "$RUNNER_TEMP" "$HOME" "$(brew --repository)")
@@ -86,7 +102,10 @@ jobs:
           compgen -G "$GITHUB_WORKSPACE/wikibrain--*.bottle.*" >/dev/null
 
       - name: Upload bottles as artifact
-        if: always() && github.event_name == 'pull_request' && matrix.bottle
+        if: >-
+          always() && github.event_name == 'pull_request' &&
+          steps.wikibrain-changes.outputs.changed == 'true' &&
+          matrix.bottle
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: bottles_${{ matrix.os }}
