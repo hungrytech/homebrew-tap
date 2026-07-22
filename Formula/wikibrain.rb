@@ -7,6 +7,7 @@ class Wikibrain < Formula
   sha256 "ccd4222db494319d1e24d8a28a9ff6d6f3f6b2ff869e7b50c79d18f3b1ec35cc"
   license "MIT"
 
+  depends_on "libyaml"
   depends_on "python@3.13"
 
   resource "setuptools" do
