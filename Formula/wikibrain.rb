@@ -1,18 +1,11 @@
 class Wikibrain < Formula
   include Language::Python::Virtualenv
 
-  desc "Local-first personal memory bridge for Claude Code and Codex"
+  desc "Local-first memory bridge for Claude Code, Codex, and Grok Build"
   homepage "https://github.com/hungrytech/wikibrain"
-  url "https://github.com/hungrytech/wikibrain/archive/refs/tags/v0.1.3.tar.gz"
-  sha256 "cba9f5c63047712a0ae1e7bb63d01c6ce1353fb08d9ae041eadf1c879ecaab1b"
+  url "https://github.com/hungrytech/wikibrain/archive/refs/tags/v0.1.4.tar.gz"
+  sha256 "ccd4222db494319d1e24d8a28a9ff6d6f3f6b2ff869e7b50c79d18f3b1ec35cc"
   license "MIT"
-
-  bottle do
-    root_url "https://ghcr.io/v2/hungrytech/tap"
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:  "8142ca6227dfdbd1bc0aa680230206537227348ceb768fd53f37ac9d638bfb61"
-    sha256 cellar: :any_skip_relocation, sequoia:      "8d9456272751bc634b451404b73efcc97ac40548a247e51930c48eef5a214e80"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "fff661305916c102dc2bc353bb31a8df02e0d8523a49f1b86830a0e92ff0f12b"
-  end
 
   depends_on "python@3.13"
 
@@ -50,6 +43,10 @@ class Wikibrain < Formula
       Codex capture and recall require a new session plus /hooks review of the
       current definition hash. brainctl does not inspect or bypass that trust.
 
+      Grok Build captures lifecycle evidence automatically. Recall is explicit
+      through the WikiBrain skill or brainctl recall because passive Grok hook
+      stdout is not injected into model context.
+
       After a future brew upgrade, refresh the managed shim and skills with:
 
         brainctl setup
@@ -69,7 +66,7 @@ class Wikibrain < Formula
     ENV.prepend_path "PATH", bin
     (testpath/"user-home").mkpath
 
-    assert_match "brainctl 0.1.3", shell_output("#{bin}/brainctl --version")
+    assert_match "brainctl 0.1.4", shell_output("#{bin}/brainctl --version")
     assert_match "wikimap 1.1.0", shell_output("#{bin}/wikimap --version")
 
     system bin/"brainctl", "init", "--no-hooks", "--no-skills"
