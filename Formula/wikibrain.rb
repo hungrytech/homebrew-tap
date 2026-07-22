@@ -13,6 +13,7 @@ class Wikibrain < Formula
     sha256 cellar: :any, x86_64_linux: "6760136b27668920fc4165ae6bfc761ea0b538b62c170422112140efc5731137"
   end
 
+  # Intel macOS may build this dependency from source when core has no bottle.
   depends_on "libyaml"
   depends_on "python@3.13"
 

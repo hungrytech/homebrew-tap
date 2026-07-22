@@ -10,9 +10,13 @@ jobs:
   test-bot:
     strategy:
       matrix:
-        os: [ macos-15-intel, macos-26 ]
         include:
+          - os: macos-15-intel
+            bottle: false
+          - os: macos-26
+            bottle: true
           - os: ubuntu-latest
+            bottle: true
             container:
               image: ghcr.io/homebrew/brew:main
               options: --privileged
@@ -30,6 +34,16 @@ jobs:
         uses: Homebrew/actions/setup-homebrew@18fcb8e3e06b4247c676c506750dc95ea7226479 # 2026.07.13.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Detect WikiBrain formula changes
+        id: wikibrain-changes
+        shell: bash
+        run: |
+          if git diff --quiet origin/main...HEAD -- Formula/wikibrain.rb; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Cache Homebrew Bundler RubyGems
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -59,8 +73,20 @@ jobs:
         env:
           HOMEBREW_DOCKER_REGISTRY_TOKEN: ${{ steps.base64-encode.outputs.token }}
 
+      - name: Test source install where dependency bottles are unavailable
+        if: >-
+          github.event_name == 'pull_request' &&
+          steps.wikibrain-changes.outputs.changed == 'true' &&
+          !matrix.bottle
+        run: |
+          brew install --build-from-source hungrytech/tap/wikibrain
+          brew test hungrytech/tap/wikibrain
+
       - name: Stage bottles in the GitHub workspace
-        if: always() && github.event_name == 'pull_request'
+        if: >-
+          always() && github.event_name == 'pull_request' &&
+          steps.wikibrain-changes.outputs.changed == 'true' &&
+          matrix.bottle
         shell: bash
         run: |
           search_roots=("$GITHUB_WORKSPACE" "$RUNNER_TEMP" "$HOME" "$(brew --repository)")
@@ -71,14 +97,17 @@ jobs:
               if [[ "$bottle" != "$destination" ]]; then
                 cp -f "$bottle" "$destination"
               fi
-            done < <(find "$root" -type f -name '*.bottle.*' -print0)
+            done < <(find "$root" -type f -name 'wikibrain--*.bottle.*' -print0)
           done
-          compgen -G "$GITHUB_WORKSPACE/*.bottle.*" >/dev/null
+          compgen -G "$GITHUB_WORKSPACE/wikibrain--*.bottle.*" >/dev/null
 
       - name: Upload bottles as artifact
-        if: always() && github.event_name == 'pull_request'
+        if: >-
+          always() && github.event_name == 'pull_request' &&
+          steps.wikibrain-changes.outputs.changed == 'true' &&
+          matrix.bottle
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: bottles_${{ matrix.os }}
-          path: '*.bottle.*'
+          path: 'wikibrain--*.bottle.*'
           if-no-files-found: error
