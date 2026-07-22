@@ -3,16 +3,9 @@ class Wikibrain < Formula
 
   desc "Local-first memory bridge for Claude Code, Codex, and Grok Build"
   homepage "https://github.com/hungrytech/wikibrain"
-  url "https://github.com/hungrytech/wikibrain/archive/refs/tags/v0.1.7.tar.gz"
-  sha256 "b95d7e2e2ec680aa38e8bbeac45ab65ac9a3cd50d8bab06446b75dd62e02de26"
+  url "https://github.com/hungrytech/wikibrain/archive/refs/tags/v0.1.8.tar.gz"
+  sha256 "0ed09635902b4cb1bcaac6d04cedf9af045bfd6972b665933c9fba5fafa5de32"
   license "MIT"
-
-  bottle do
-    root_url "https://ghcr.io/v2/hungrytech/tap"
-    rebuild 1
-    sha256 cellar: :any, arm64_tahoe:  "1745edf75ed0728db75d89997b33465ffc5c7435161265b81e11f22a37cd740b"
-    sha256 cellar: :any, x86_64_linux: "890cc8f76cd0d8977039e66e8c64f23154efad82b76afe7b83365fb9abb7cbdb"
-  end
 
   depends_on "libyaml"
   depends_on "python@3.13"
@@ -86,7 +79,7 @@ class Wikibrain < Formula
     ENV.prepend_path "PATH", bin
     (testpath/"user-home").mkpath
 
-    assert_match "brainctl 0.1.7", shell_output("#{bin}/brainctl --version")
+    assert_match "brainctl 0.1.8", shell_output("#{bin}/brainctl --version")
     assert_match "wikimap 1.1.0", shell_output("#{bin}/wikimap --version")
 
     system bin/"brainctl", "init", "--no-hooks", "--no-skills"
