@@ -59,9 +59,18 @@ jobs:
         env:
           HOMEBREW_DOCKER_REGISTRY_TOKEN: ${{ steps.base64-encode.outputs.token }}
 
+      - name: Stage bottles in the GitHub workspace
+        if: always() && github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          tap_path="$(brew --repository)/Library/Taps/${GITHUB_REPOSITORY%%/*}/homebrew-${GITHUB_REPOSITORY#*/}"
+          find "$tap_path" -maxdepth 1 -type f -name '*.bottle.*' -exec cp {} "$GITHUB_WORKSPACE/" \;
+          compgen -G "$GITHUB_WORKSPACE/*.bottle.*" >/dev/null
+
       - name: Upload bottles as artifact
         if: always() && github.event_name == 'pull_request'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: bottles_${{ matrix.os }}
           path: '*.bottle.*'
+          if-no-files-found: error
