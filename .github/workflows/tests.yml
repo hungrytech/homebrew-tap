@@ -63,12 +63,16 @@ jobs:
         if: always() && github.event_name == 'pull_request'
         shell: bash
         run: |
-          tap_repo="${GITHUB_REPOSITORY#*/}"
-          if [[ "$tap_repo" != homebrew-* ]]; then
-            tap_repo="homebrew-$tap_repo"
-          fi
-          tap_path="$(brew --repository)/Library/Taps/${GITHUB_REPOSITORY%%/*}/$tap_repo"
-          find "$tap_path" -maxdepth 1 -type f -name '*.bottle.*' -exec cp {} "$GITHUB_WORKSPACE/" \;
+          search_roots=("$GITHUB_WORKSPACE" "$RUNNER_TEMP" "$HOME" "$(brew --repository)")
+          for root in "${search_roots[@]}"; do
+            [[ -d "$root" ]] || continue
+            while IFS= read -r -d '' bottle; do
+              destination="$GITHUB_WORKSPACE/$(basename "$bottle")"
+              if [[ "$bottle" != "$destination" ]]; then
+                cp -f "$bottle" "$destination"
+              fi
+            done < <(find "$root" -type f -name '*.bottle.*' -print0)
+          done
           compgen -G "$GITHUB_WORKSPACE/*.bottle.*" >/dev/null
 
       - name: Upload bottles as artifact
