@@ -3,17 +3,10 @@ class Wikibrain < Formula
 
   desc "Local-first memory bridge for Claude Code, Codex, and Grok Build"
   homepage "https://github.com/hungrytech/wikibrain"
-  url "https://github.com/hungrytech/wikibrain/archive/refs/tags/v0.1.4.tar.gz"
-  sha256 "ccd4222db494319d1e24d8a28a9ff6d6f3f6b2ff869e7b50c79d18f3b1ec35cc"
+  url "https://github.com/hungrytech/wikibrain/archive/refs/tags/v0.1.5.tar.gz"
+  sha256 "f95f1218d7d1d967b475205b1bee5a0cad2ed57b6b8842ab38deb59f42cca48c"
   license "MIT"
 
-  bottle do
-    root_url "https://ghcr.io/v2/hungrytech/tap"
-    sha256 cellar: :any, arm64_tahoe:  "bfea04ed6ee74faabe2a48bb7ca272cd25978df3529c3a08a2b54fb46c86f9db"
-    sha256 cellar: :any, x86_64_linux: "6760136b27668920fc4165ae6bfc761ea0b538b62c170422112140efc5731137"
-  end
-
-  # Intel macOS may build this dependency from source when core has no bottle.
   depends_on "libyaml"
   depends_on "python@3.13"
 
@@ -86,7 +79,7 @@ class Wikibrain < Formula
     ENV.prepend_path "PATH", bin
     (testpath/"user-home").mkpath
 
-    assert_match "brainctl 0.1.4", shell_output("#{bin}/brainctl --version")
+    assert_match "brainctl 0.1.5", shell_output("#{bin}/brainctl --version")
     assert_match "wikimap 1.1.0", shell_output("#{bin}/wikimap --version")
 
     system bin/"brainctl", "init", "--no-hooks", "--no-skills"
