@@ -3,14 +3,14 @@ class Wikibrain < Formula
 
   desc "Local-first memory bridge for Claude Code, Codex, and Grok Build"
   homepage "https://github.com/hungrytech/wikibrain"
-  url "https://github.com/hungrytech/wikibrain/archive/refs/tags/v0.1.6.tar.gz"
-  sha256 "cac79a83dbd2a7b399a4641af8ecdc53410a73a91bec480d70ad80c6c0e03fd5"
+  url "https://github.com/hungrytech/wikibrain/archive/refs/tags/v0.1.7.tar.gz"
+  sha256 "b95d7e2e2ec680aa38e8bbeac45ab65ac9a3cd50d8bab06446b75dd62e02de26"
   license "MIT"
 
   bottle do
     root_url "https://ghcr.io/v2/hungrytech/tap"
-    sha256 cellar: :any, arm64_tahoe:  "52968e895c9b01b612074fecdcdb675356dbcad8acd71c5204d6ecdcc2e53c1c"
-    sha256 cellar: :any, x86_64_linux: "c40d57e439adc427c753542b1b9e037a4ccfd649d99cbf05bf6304ce04bd31de"
+    sha256 cellar: :any, arm64_tahoe:  "e0a5dc42d3358ee6f1fab7e782679d9c8b2482cf536520a0fe6856d131197e71"
+    sha256 cellar: :any, x86_64_linux: "9074c585088496e532e92e073e7b6effe42f42d92614ba4595ec599e0ab8d756"
   end
 
   depends_on "libyaml"
@@ -85,7 +85,7 @@ class Wikibrain < Formula
     ENV.prepend_path "PATH", bin
     (testpath/"user-home").mkpath
 
-    assert_match "brainctl 0.1.6", shell_output("#{bin}/brainctl --version")
+    assert_match "brainctl 0.1.7", shell_output("#{bin}/brainctl --version")
     assert_match "wikimap 1.1.0", shell_output("#{bin}/wikimap --version")
 
     system bin/"brainctl", "init", "--no-hooks", "--no-skills"
